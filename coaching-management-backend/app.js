@@ -1,0 +1,59 @@
+const express = require('express');
+const cors = require('cors');
+const dotenv = require('dotenv');
+
+
+dotenv.config();
+
+
+const authRoutes = require('./routes/authRoutes');
+const studentRoutes = require('./routes/studentRoutes');
+const batchRoutes = require('./routes/batchRoutes');
+
+
+const app = express();
+
+
+app.use(cors({
+  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+  credentials: true
+}));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+
+app.get('/', (req, res) => {
+  res.json({
+    message: 'SmartCCM is Running!',
+   
+  });
+});
+
+// APIS
+app.use('/api/auth', authRoutes);
+app.use('/api/students', studentRoutes);
+app.use('/api/batches', batchRoutes);
+
+// 404
+app.use('*', (req, res) => {
+  res.status(404).json({
+    message: 'Route not found',
+    availableRoutes: {
+      auth: '/api/auth (POST /login, POST /register, GET /profile)',
+      students: '/api/students (GET, POST, PUT, DELETE)',
+      batches: '/api/batches (GET, POST)'
+    }
+  });
+});
+
+
+app.use((err, req, res, next) => {
+  console.error('Global error:', err);
+  
+  res.status(err.status || 500).json({
+    message: err.message || 'Internal server error',
+    ...(process.env.NODE_ENV === 'development' && { stack: err.stack })
+  });
+});
+
+module.exports = app;
