@@ -20,7 +20,6 @@ const Banner = () => {
 
           </div>
 
-          {/* Subtitle */}
           <p className="text-xl text-base-content/70 mb-8 max-w-2xl mx-auto leading-relaxed">
             Manage batches, track attendance, and publish notices – all from one place.
             Your complete solution for coaching management made simple.
@@ -56,7 +55,7 @@ const Banner = () => {
   </div>
 </div>
 
-          {/* CTA Button */}
+          {/* CTA */}
           <div className="flex justify-center items-center mb-10">
             <button 
               className="btn btn-primary btn-lg"

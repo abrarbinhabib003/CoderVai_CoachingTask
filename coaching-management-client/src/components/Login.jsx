@@ -1,45 +1,56 @@
-import React, { useState } from 'react';
-import { useAuth } from '../context/Authcontext';
+import React, { useState, useEffect } from 'react';
+import { useAuth } from '../api/UseAuth';
+import Swal from 'sweetalert2';
+import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
   const { login } = useAuth();
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     email: '',
     password: ''
   });
-  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState(false);
 
   const handleChange = (e) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value
     });
-    setError('');
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
     setLoading(true);
 
-    // Basic validation
     if (!formData.email || !formData.password) {
-      setError('Email and password are required');
+      Swal.fire({
+        icon: 'warning',
+        title: 'Missing Fields',
+        text: 'Email and password are required.'
+      });
       setLoading(false);
       return;
     }
 
     try {
       await login(formData.email, formData.password);
-      setSuccess(true);
-      setFormData({ email: '', password: '' });
+
+      Swal.fire({
+        title: 'Login Successful!',
+        text: 'Welcome back. Redirecting to dashboard...',
+        icon: 'success',
+        timer: 2000,
+        timerProgressBar: true,
+        showConfirmButton: false
+      }).then(() => {
+        navigate('/admin-dashboard'); 
+      });
     } catch (error) {
-      console.error('Login error:', error); 
+      console.error('Login error:', error);
       let errorMessage = 'Login failed. Please try again.';
-      
-      
+
       if (error.code === 'auth/user-not-found') {
         errorMessage = 'No account found with this email address.';
       } else if (error.code === 'auth/wrong-password') {
@@ -55,32 +66,23 @@ const Login = () => {
       } else if (error.code === 'auth/network-request-failed') {
         errorMessage = 'Network error. Please check your connection.';
       } else if (error.message) {
-      
         errorMessage = error.message;
       }
-      
-      setError(errorMessage);
+
+      Swal.fire({
+        icon: 'error',
+        title: 'Login Failed',
+        text: errorMessage
+      });
     } finally {
       setLoading(false);
     }
   };
 
-  if (success) {
-    return (
-      <div className="max-w-md mx-auto mt-8 p-6 bg-white rounded-lg shadow-md">
-        <div className="text-center">
-          <div className="text-green-600 text-4xl mb-4">✓</div>
-          <h2 className="text-2xl font-bold text-green-600 mb-2">Login Successful!</h2>
-        
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="max-w-md mx-auto mt-8 p-6 bg-white rounded-lg shadow-md">
       <h2 className="text-2xl font-bold text-center mb-6">Sign In</h2>
-      
+
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
@@ -113,12 +115,6 @@ const Login = () => {
             disabled={loading}
           />
         </div>
-
-        {error && (
-          <div className="alert alert-error">
-            <span>{error}</span>
-          </div>
-        )}
 
         <button
           type="submit"

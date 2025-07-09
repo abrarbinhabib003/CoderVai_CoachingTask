@@ -4,26 +4,26 @@ const { PrismaClient } = require('./generated/prisma');
 const PORT = process.env.PORT || 5000;
 const prisma = new PrismaClient();
 
-// Test DB
+// Test database connection
 async function connectDB() {
   try {
     await prisma.$connect();
-    console.log(' Database connected successfully');
+    console.log(' Database connected');
   } catch (error) {
-    console.error(' Database connection failed:', error);
+    console.error('Database connection failed:', error);
     process.exit(1);
   }
 }
 
-
+// Graceful shutdown
 process.on('SIGINT', async () => {
-  console.log('\n Shutting down gracefully...');
+  console.log('\n🔄 Shutting down gracefully...');
   await prisma.$disconnect();
   process.exit(0);
 });
 
 process.on('SIGTERM', async () => {
-  console.log('\n Shutting down gracefully...');
+  console.log('\n🔄 Shutting down gracefully...');
   await prisma.$disconnect();
   process.exit(0);
 });
@@ -34,11 +34,11 @@ async function startServer() {
   
   app.listen(PORT, () => {
     console.log(` Server is running on http://localhost:${PORT}`);
-   console.log(` Environment: ${process.env.NODE_ENV || 'development'}`);
+    console.log(` Environment: ${process.env.NODE_ENV || 'development'}`);
   });
 }
 
 startServer().catch((error) => {
-  console.error(' Failed to start server:', error);
+  console.error('Failed to start server:', error);
   process.exit(1);
 });

@@ -1,30 +1,34 @@
 const { PrismaClient } = require('../generated/prisma');
 const prisma = new PrismaClient();
 
-// Add student
+// Add  new student
 exports.addStudent = async (req, res) => {
   const { name, roll, batchId } = req.body;
   
+  console.log('Adding new student:', { name, roll, batchId, userId: req.user?.id });
+  
   try {
-   
+    // Check  batch existstence
     const batch = await prisma.batch.findUnique({
       where: { id: parseInt(batchId) }
     });
 
     if (!batch) {
+      console.log('Batch not found:', batchId);
       return res.status(404).json({ message: 'Batch not found' });
     }
 
-   
+    // Check  roll number existstencew
     const existingStudent = await prisma.student.findUnique({
       where: { roll }
     });
 
     if (existingStudent) {
+      console.log('Roll number already exists:', roll);
       return res.status(400).json({ message: 'Roll number already exists' });
     }
 
-   
+    // Create new student
     const student = await prisma.student.create({
       data: {
         name,
@@ -36,6 +40,7 @@ exports.addStudent = async (req, res) => {
       }
     });
 
+    console.log('Student added successfully:', { studentId: student.id, name: student.name, roll: student.roll });
     res.status(201).json({
       message: 'Student added successfully',
       student
@@ -46,8 +51,10 @@ exports.addStudent = async (req, res) => {
   }
 };
 
-// Get students
+// Get all students
 exports.getAllStudents = async (req, res) => {
+  console.log(' Fetching all students for user:', req.user?.id);
+  
   try {
     const students = await prisma.student.findMany({
       include: {
@@ -59,6 +66,7 @@ exports.getAllStudents = async (req, res) => {
       }
     });
 
+    console.log('Students fetched successfully:', students.length);
     res.json({
       message: 'Students fetched successfully',
       students
@@ -69,12 +77,15 @@ exports.getAllStudents = async (req, res) => {
   }
 };
 
-// Get students by batch
+// Get students by batch ID
 exports.getStudentsByBatch = async (req, res) => {
   const { batchId } = req.query;
   
+  console.log('Fetching students for batch:', batchId, 'by user:', req.user?.id);
+  
   try {
     if (!batchId) {
+      console.log('Batch ID missing in request');
       return res.status(400).json({ message: 'Batch ID is required' });
     }
 
@@ -95,6 +106,7 @@ exports.getStudentsByBatch = async (req, res) => {
       }
     });
 
+    console.log('Students by batch fetched successfully:', students.length);
     res.json({
       message: 'Students fetched successfully',
       students
@@ -105,9 +117,11 @@ exports.getStudentsByBatch = async (req, res) => {
   }
 };
 
-// Get student by ID
+// Get single student by ID
 exports.getStudentById = async (req, res) => {
   const { id } = req.params;
+  
+  console.log('Fetching student by ID:', id, 'by user:', req.user?.id);
   
   try {
     const student = await prisma.student.findUnique({
@@ -125,9 +139,11 @@ exports.getStudentById = async (req, res) => {
     });
 
     if (!student) {
+      console.log('Student not found:', id);
       return res.status(404).json({ message: 'Student not found' });
     }
 
+    console.log('Student fetched successfully:', { id: student.id, name: student.name });
     res.json({
       message: 'Student fetched successfully',
       student
@@ -143,39 +159,44 @@ exports.updateStudent = async (req, res) => {
   const { id } = req.params;
   const { name, roll, batchId } = req.body;
   
+  console.log('Updating student:', { id, name, roll, batchId, userId: req.user?.id });
+  
   try {
-    
+    // Check if student exists
     const existingStudent = await prisma.student.findUnique({
       where: { id: parseInt(id) }
     });
 
     if (!existingStudent) {
+      console.log('Student not found for update:', id);
       return res.status(404).json({ message: 'Student not found' });
     }
 
-   
+    // Check if new roll number conflicts with another student
     if (roll && roll !== existingStudent.roll) {
       const rollConflict = await prisma.student.findUnique({
         where: { roll }
       });
 
       if (rollConflict) {
+        console.log(' Roll number conflict during update:', roll);
         return res.status(400).json({ message: 'Roll number already exists' });
       }
     }
 
-   
+
     if (batchId) {
       const batch = await prisma.batch.findUnique({
         where: { id: parseInt(batchId) }
       });
 
       if (!batch) {
+        console.log(' Batch not found for update:', batchId);
         return res.status(404).json({ message: 'Batch not found' });
       }
     }
 
-
+    // Update student
     const updatedStudent = await prisma.student.update({
       where: { id: parseInt(id) },
       data: {
@@ -188,6 +209,7 @@ exports.updateStudent = async (req, res) => {
       }
     });
 
+    console.log('Student updated successfully:', { id: updatedStudent.id, name: updatedStudent.name });
     res.json({
       message: 'Student updated successfully',
       student: updatedStudent
@@ -202,21 +224,25 @@ exports.updateStudent = async (req, res) => {
 exports.deleteStudent = async (req, res) => {
   const { id } = req.params;
   
+  console.log('Deleting student:', id, 'by user:', req.user?.id);
+  
   try {
-   
+    // Check if student exists
     const existingStudent = await prisma.student.findUnique({
       where: { id: parseInt(id) }
     });
 
     if (!existingStudent) {
+      console.log('Student not found for deletion:', id);
       return res.status(404).json({ message: 'Student not found' });
     }
 
-    
+   
     await prisma.student.delete({
       where: { id: parseInt(id) }
     });
 
+    console.log('Student deleted successfully:', { id, name: existingStudent.name });
     res.json({
       message: 'Student deleted successfully'
     });

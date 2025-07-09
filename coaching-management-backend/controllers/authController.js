@@ -3,124 +3,234 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const prisma = new PrismaClient();
 
-// register
+
 exports.register = async (req, res) => {
-  const { username, password } = req.body;
+  const { username, password, name, email } = req.body;
   
   try {
-   
-    const adminCount = await prisma.admin.count();
+    console.log(' Registration attempt for username:', username);
     
-    if (adminCount > 0) {
-      return res.status(403).json({ 
-        message: 'Admin registration is closed. Only one admin account is allowed.',
-        info: 'The system already has an admin account. Please use the login endpoint.'
+   
+    const existingAdminCount = await prisma.admin.count();
+    console.log(' Current admin count:', existingAdminCount);
+    
+    if (existingAdminCount > 0) {
+      console.log('Registration rejected: Admin already exists');
+      return res.status(400).json({ 
+        success: false,
+        error: 'Admin registration is closed. Only one admin is allowed.' 
       });
     }
 
-  
+    // Validate required 
     if (!username || !password) {
-      return res.status(400).json({ message: 'Username and password are required' });
+      console.log('Registration failed: Missing required fields');
+      return res.status(400).json({ 
+        success: false,
+        error: 'Username and password are required' 
+      });
     }
 
-    if (password.length < 6) {
-      return res.status(400).json({ message: 'Password must be at least 6 characters long' });
-    }
-
-
+    // Hash password
+    console.log('Hashing password...');
     const hashedPassword = await bcrypt.hash(password, 12);
 
-
+    // Create new admin
+    console.log('Creating new admin...');
     const admin = await prisma.admin.create({
       data: {
         username,
-        password: hashedPassword
+        password: hashedPassword,
+        name: name || username,
+        email: email || `${username}@smartccm.com`
       }
     });
 
-    //  JWT token
+    console.log('Admin created successfully:', { id: admin.id, username: admin.username });
+
+    // Generate JWT token
     const token = jwt.sign(
       { id: admin.id, username: admin.username }, 
       process.env.JWT_SECRET, 
       { expiresIn: '24h' }
     );
 
+    console.log('JWT token generated for admin:', admin.id);
+
+    // Set HTTP-only cookie
+    res.cookie('authToken', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 24 * 60 * 60 * 1000 // 24 hours
+    });
+
+    console.log('HTTP-only cookie set :', admin.username);
+
     res.status(201).json({
-      message: 'First admin registered successfully! Registration is now disabled.',
-      token,
+      success: true,
+      message: 'Admin registered successfully',
       admin: {
         id: admin.id,
-        username: admin.username
+        username: admin.username,
+        name: admin.name,
+        email: admin.email
       }
     });
   } catch (err) {
     console.error('Registration error:', err);
-    
-   
-    if (err.code === 'P2002') {
-      return res.status(400).json({ message: 'Username already exists' });
-    }
-    
-    res.status(500).json({ error: 'Server error during registration' });
+    res.status(500).json({ 
+      success: false,
+      error: 'Server error during registration' 
+    });
   }
 };
 
-// Login 
+// Login admin
 exports.login = async (req, res) => {
   const { username, password } = req.body;
   
   try {
-   
+    console.log('🔐 Login attempt for username:', username);
+    
+    // Validate required fields
+    if (!username || !password) {
+      console.log(' Login failed: Missing credentials');
+      return res.status(400).json({ 
+        success: false,
+        error: 'Username and password are required' 
+      });
+    }
+    
+    // Find admin by username
+    console.log(' Searching for admin with username:', username);
     const admin = await prisma.admin.findUnique({ 
       where: { username } 
     });
 
     if (!admin) {
-      return res.status(401).json({ message: 'Invalid username or password' });
+      console.log('Login failed: Admin not found');
+      return res.status(401).json({ 
+        success: false,
+        error: 'Invalid username or password' 
+      });
     }
 
-   
+    console.log('👤 Admin found:', { id: admin.id, username: admin.username });
+
+    // Check pass
+    console.log('Verifying password...');
     const isPasswordValid = await bcrypt.compare(password, admin.password);
     if (!isPasswordValid) {
-      return res.status(401).json({ message: 'Invalid username or password' });
+      console.log('Login failed: Invalid password');
+      return res.status(401).json({ 
+        success: false,
+        error: 'Invalid username or password' 
+      });
     }
 
-    //  JWT token
+    console.log('Password verified successfully');
+
+    // Generate JWT token
     const token = jwt.sign(
       { id: admin.id, username: admin.username }, 
       process.env.JWT_SECRET, 
       { expiresIn: '24h' }
     );
 
+    console.log('🎫 JWT token generated for admin:', admin.id);
+
+    // Set HTTP-only cookie
+    res.cookie('authToken', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 24 * 60 * 60 * 1000 // 24 hours
+    });
+
+    console.log('HTTP-only cookie set for admin:', admin.username);
+
     res.json({
+      success: true,
       message: 'Login successful',
-      token,
       admin: {
         id: admin.id,
-        username: admin.username
+        username: admin.username,
+        name: admin.name,
+        email: admin.email
       }
     });
   } catch (err) {
     console.error('Login error:', err);
-    res.status(500).json({ error: 'Server error during login' });
+    res.status(500).json({ 
+      success: false,
+      error: 'Server error during login' 
+    });
   }
 };
 
 // profile
 exports.getProfile = async (req, res) => {
   try {
+    console.log('👤 Profile request for admin ID:', req.user.id);
+    
     const admin = await prisma.admin.findUnique({
-      where: { id: req.admin.id },
-      select: { id: true, username: true }
+      where: { id: req.user.id },
+      select: { 
+        id: true, 
+        username: true, 
+        name: true, 
+        email: true,
+        createdAt: true
+      }
     });
 
     if (!admin) {
-      return res.status(404).json({ message: 'Admin not found' });
+      console.log('Profile fetch failed: Admin not found');
+      return res.status(404).json({ 
+        success: false,
+        error: 'Admin not found' 
+      });
     }
 
-    res.json(admin);
+    console.log('Profile fetched successfully for:', admin.username);
+
+    res.json({
+      success: true,
+      admin
+    });
   } catch (err) {
     console.error('Profile error:', err);
-    res.status(500).json({ error: 'Server error fetching profile' });
+    res.status(500).json({ 
+      success: false,
+      error: 'Server error fetching profile' 
+    });
+  }
+};
+
+// Logout 
+exports.logout = async (req, res) => {
+  try {
+    console.log('Logout request for admin ID:', req.user.id);
+    
+    // Clear HTTP-only cookie
+    res.clearCookie('authToken', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict'
+    });
+
+    console.log('HTTP-only cookie cleared, admin logged out');
+
+    res.json({
+      success: true,
+      message: 'Logged out successfully'
+    });
+  } catch (err) {
+    console.error('Logout error:', err);
+    res.status(500).json({ 
+      success: false,
+      error: 'Server error during logout' 
+    });
   }
 };

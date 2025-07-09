@@ -1,77 +1,104 @@
 import React, { useState } from 'react';
-import { useAuth } from '../context/Authcontext';
+import { useAuth } from '../api/UseAuth';
+import Swal from 'sweetalert2';
+import { useNavigate } from 'react-router-dom';
 
 const Register = () => {
   const { register } = useAuth();
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     email: '',
     password: '',
     confirmPassword: ''
   });
-  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState(false);
 
   const handleChange = (e) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value
     });
-    setError(''); 
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
     setLoading(true);
 
-    // Basic validation
+    // Client-side validation
     if (!formData.email || !formData.password || !formData.confirmPassword) {
-      setError('All fields are required');
+      Swal.fire({
+        icon: 'warning',
+        title: 'All Fields Required',
+        text: 'Please fill in all the fields.'
+      });
       setLoading(false);
       return;
     }
 
     if (formData.password !== formData.confirmPassword) {
-      setError('Passwords do not match');
+      Swal.fire({
+        icon: 'error',
+        title: 'Password Mismatch',
+        text: 'Passwords do not match.'
+      });
       setLoading(false);
       return;
     }
 
     if (formData.password.length < 6) {
-      setError('Password must be at least 6 characters');
+      Swal.fire({
+        icon: 'info',
+        title: 'Weak Password',
+        text: 'Password must be at least 6 characters long.'
+      });
       setLoading(false);
       return;
     }
 
     try {
       await register(formData.email, formData.password);
-      setSuccess(true);
+
+      Swal.fire({
+        title: 'Registration Successful!',
+        text: 'Your account has been created. Redirecting to login...',
+        icon: 'success',
+        timer: 2000,
+        timerProgressBar: true,
+        showConfirmButton: false
+      }).then(() => {
+        navigate('/login');
+      });
+
       setFormData({ email: '', password: '', confirmPassword: '' });
     } catch (error) {
-      setError(error.message);
+      console.error('Registration error:', error);
+      let errorMessage = 'Something went wrong. Please try again.';
+
+      if (error.code === 'auth/email-already-in-use') {
+        errorMessage = 'This email is already registered.';
+      } else if (error.code === 'auth/invalid-email') {
+        errorMessage = 'Invalid email address.';
+      } else if (error.code === 'auth/weak-password') {
+        errorMessage = 'Password is too weak.';
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+
+      Swal.fire({
+        icon: 'error',
+        title: 'Registration Failed',
+        text: errorMessage
+      });
     } finally {
       setLoading(false);
     }
   };
 
-  if (success) {
-    return (
-      <div className="max-w-md mx-auto mt-8 p-6 bg-white rounded-lg shadow-md">
-        <div className="text-center">
-          <div className="text-green-600 text-4xl mb-4">✓</div>
-          <h2 className="text-2xl font-bold text-green-600 mb-2">Registration Successful!</h2>
-          <p className="text-gray-600 mb-4">Your account has been created successfully.</p>
-         
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="max-w-md mx-auto mt-8 p-6 bg-white rounded-lg shadow-md">
       <h2 className="text-2xl font-bold text-center mb-6">Create Account</h2>
-      
+
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
@@ -120,12 +147,6 @@ const Register = () => {
             disabled={loading}
           />
         </div>
-
-        {error && (
-          <div className="alert alert-error">
-            <span>{error}</span>
-          </div>
-        )}
 
         <button
           type="submit"

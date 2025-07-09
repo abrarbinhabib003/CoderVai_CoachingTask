@@ -1,6 +1,7 @@
 import React from 'react';
-import { useAuth } from '../context/Authcontext';
+import { useAuth } from '../api/UseAuth';
 import { useNavigate } from 'react-router-dom';
+
 
 const Navbar = () => {
   const { currentUser, logout } = useAuth();

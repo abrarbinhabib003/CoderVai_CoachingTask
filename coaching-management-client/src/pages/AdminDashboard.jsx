@@ -9,9 +9,10 @@ import {
 
 import DashboardOverview from '../components/DashboardOverview';
 import BatchManagement from '../components/BatchManagement';
-import StudentManagement from '../components/StudentManagement';
+
 import AttendanceManagement from '../components/AttendanceManagement';
 import NoticeBoard from '../components/NoticeBoard';
+import StudentManagement from '../components/StudentManagement';
 
 const AdminDashboard = () => {
   const [activeSection, setActiveSection] = useState('dashboard');
@@ -22,6 +23,7 @@ const AdminDashboard = () => {
     { id: 'students', name: 'Students', icon: HiOutlineUserGroup },
     { id: 'attendance', name: 'Attendance', icon: HiOutlineCheckCircle },
     { id: 'notices', name: 'Notices', icon: HiOutlineSpeakerphone },
+
   ];
 
   const renderContent = () => {
@@ -36,6 +38,7 @@ const AdminDashboard = () => {
         return <AttendanceManagement />;
       case 'notices':
         return <NoticeBoard />;
+     
       default:
         return <DashboardOverview />;
     }

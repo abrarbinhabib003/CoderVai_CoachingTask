@@ -1,12 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const studentController = require('../controllers/studentController');
-const { protect } = require('../middleware/authMiddleware');
 
 
-router.use(protect);
-
-
+// Student routes
 router.post('/', studentController.addStudent);           
 router.get('/', studentController.getAllStudents);        
 router.get('/batch', studentController.getStudentsByBatch); 

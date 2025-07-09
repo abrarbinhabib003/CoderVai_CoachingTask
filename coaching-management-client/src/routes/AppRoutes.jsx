@@ -16,8 +16,6 @@ const AppRoutes = () => {
           <Route path="admin-dashboard" element={<AdminDashboard />} />
           <Route path="register" element={<Register />} />
           <Route path="login" element={<Login />} />
-
-
           <Route path="*" element={<ErrorPage />} />
       </Route>
       </Routes>
