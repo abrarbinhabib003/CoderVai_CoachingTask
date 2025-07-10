@@ -7,7 +7,8 @@ A mini full-stack web application for managing students, batches, and basic admi
 ##  Live Website
  [https://codervai-coaching.web.app/](https://codervai-coaching.web.app/)
 
-
+## Backend 
+[https://coaching-management-backend-one.vercel.app/](https://coaching-management-backend-one.vercel.app/)
 ## Project Overview
 This web app allows administrators to manage students and batches, perform CRUD operations, and navigate a functional dashboard. The app also includes Firebase-based authentication and future plans for attendance and notice features.
 
