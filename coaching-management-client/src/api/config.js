@@ -1,8 +1,9 @@
 
 export const API_BASE_URL = 'http://localhost:5000/api';
 
+
 export const API_ENDPOINTS = {
-  // Auth 
+  
   auth: {
     login: `${API_BASE_URL}/auth/login`,
     register: `${API_BASE_URL}/auth/register`,
@@ -10,7 +11,7 @@ export const API_ENDPOINTS = {
     profile: `${API_BASE_URL}/auth/profile`,
   },
   
-  // Student
+  // Student endpoints
   students: {
     base: `${API_BASE_URL}/students`,
     create: `${API_BASE_URL}/students`,
@@ -20,7 +21,7 @@ export const API_ENDPOINTS = {
     delete: (id) => `${API_BASE_URL}/students/${id}`,
   },
   
-  // Batch 
+  // Batch endpoints
   batches: {
     base: `${API_BASE_URL}/batches`,
     create: `${API_BASE_URL}/batches`,
@@ -30,8 +31,8 @@ export const API_ENDPOINTS = {
     delete: (id) => `${API_BASE_URL}/batches/${id}`,
   },
   
+ 
 };
-
 
 export const API_CONFIG = {
   baseURL: API_BASE_URL,

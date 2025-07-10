@@ -9,7 +9,6 @@ import {
 
 import DashboardOverview from '../components/DashboardOverview';
 import BatchManagement from '../components/BatchManagement';
-
 import AttendanceManagement from '../components/AttendanceManagement';
 import NoticeBoard from '../components/NoticeBoard';
 import StudentManagement from '../components/StudentManagement';
@@ -23,7 +22,6 @@ const AdminDashboard = () => {
     { id: 'students', name: 'Students', icon: HiOutlineUserGroup },
     { id: 'attendance', name: 'Attendance', icon: HiOutlineCheckCircle },
     { id: 'notices', name: 'Notices', icon: HiOutlineSpeakerphone },
-
   ];
 
   const renderContent = () => {
@@ -38,7 +36,6 @@ const AdminDashboard = () => {
         return <AttendanceManagement />;
       case 'notices':
         return <NoticeBoard />;
-     
       default:
         return <DashboardOverview />;
     }
@@ -46,9 +43,9 @@ const AdminDashboard = () => {
 
   return (
     <div className="min-h-screen bg-base-200">
-      <div className="flex">
-        {/* Sidebar */}
-        <div className="w-64 min-h-screen bg-base-100 shadow-lg">
+      <div className="flex flex-col md:flex-row">
+        {/* Sidebar - visible on md */}
+        <div className="hidden md:block w-64 min-h-screen bg-base-100 shadow-lg">
           <div className="p-4 border-b">
             <h1 className="text-xl font-bold text-primary">SmartCCM Admin</h1>
             <p className="text-sm text-gray-600">Coaching Management</p>
@@ -75,10 +72,27 @@ const AdminDashboard = () => {
           </nav>
         </div>
 
-        {/* Main Content */}
-        <div className="flex-1">
-          {renderContent()}
+        {/* Mobile Filter  */}
+        <div className="md:hidden bg-base-100 px-4 py-2 sticky top-0 z-10 shadow-sm">
+          <div className="flex flex-wrap gap-2 overflow-x-auto">
+            {menuItems.map(({ id, name }) => (
+              <button
+                key={id}
+                onClick={() => setActiveSection(id)}
+                className={`text-sm px-3 py-2 rounded-full border ${
+                  activeSection === id
+                    ? 'bg-primary text-white border-primary'
+                    : 'text-gray-700 border-gray-300 hover:border-primary hover:text-primary'
+                }`}
+              >
+                {name}
+              </button>
+            ))}
+          </div>
         </div>
+
+        {/* Main */}
+        <div className="flex-1 p-4">{renderContent()}</div>
       </div>
     </div>
   );

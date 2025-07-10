@@ -19,109 +19,81 @@ const StudentManagement = () => {
     batchId: ''
   });
 
+  const getAuthHeaders = () => ({
+    headers: { 'Content-Type': 'application/json' }
+  });
 
-  const getAuthHeaders = () => {
-    return {
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    };
-  };
-
-  // Fetch 
   const fetchStudents = useCallback(async () => {
     try {
-      console.log('Fetching all students');
       setLoading(true);
       const response = await axios.get(API_ENDPOINTS.students.getAll, getAuthHeaders());
-      console.log('Students fetched successfully:', response.data.students?.length || 0);
       setStudents(response.data.students);
       setError('');
     } catch (err) {
-      console.error('Failed to fetch students:', err.response?.data?.message || err.message);
-      setError(err.response?.data?.message || 'Failed to fetch students');
-      Swal.fire('Error!', err.response?.data?.message || 'Failed to fetch students', 'error');
+      const msg = err.response?.data?.message || 'Failed to fetch students';
+      setError(msg);
+      Swal.fire('Error!', msg, 'error');
     } finally {
       setLoading(false);
     }
   }, []);
 
-  // Fetch students 
   const fetchStudentsByBatch = useCallback(async (batchId) => {
     try {
-      console.log('Fetching students for batch:', batchId);
       setLoading(true);
       const response = await axios.get(
         `${API_ENDPOINTS.students.base}/batch?batchId=${batchId}`,
         getAuthHeaders()
       );
-      console.log('Students by batch fetched successfully:', response.data.students?.length || 0);
       setStudents(response.data.students);
       setError('');
     } catch (err) {
-      console.error('Failed to fetch students by batch:', err.response?.data?.message || err.message);
-      setError(err.response?.data?.message || 'Failed to fetch students by batch');
-      Swal.fire('Error!', err.response?.data?.message || 'Failed to fetch students by batch', 'error');
+      const msg = err.response?.data?.message || 'Failed to fetch students by batch';
+      setError(msg);
+      Swal.fire('Error!', msg, 'error');
     } finally {
       setLoading(false);
     }
   }, []);
 
-  // Fetch  batches
   const fetchBatches = useCallback(async () => {
     try {
-      console.log(' Fetching all batches...');
       const response = await axios.get(API_ENDPOINTS.batches.getAll, getAuthHeaders());
-      console.log('Batches fetched successfully:', response.data.batches?.length || 0);
       setBatches(response.data.batches);
     } catch (err) {
-      console.error('Failed to fetch batches:', err.response?.data?.message || err.message);
-      Swal.fire('Error!', err.response?.data?.message || 'Failed to fetch batches', 'error');
+      const msg = err.response?.data?.message || 'Failed to fetch batches';
+      Swal.fire('Error!', msg, 'error');
     }
   }, []);
 
-  
   const studentCounts = React.useMemo(() => {
     const counts = {};
-    for (const batch of batches) {
-      counts[batch.id] = 0;
-    }
-    for (const student of students) {
-      if (student.batchId && counts.hasOwnProperty(student.batchId)) {
-        counts[student.batchId]++;
-      }
-    }
+    batches.forEach(batch => { counts[batch.id] = 0; });
+    students.forEach(student => {
+      if (counts[student.batchId] !== undefined) counts[student.batchId]++;
+    });
     return counts;
   }, [batches, students]);
 
-  // Add new student
   const addStudent = async () => {
     try {
-      console.log('➕ Adding new student:', formData);
       setLoading(true);
       await axios.post(API_ENDPOINTS.students.create, formData, getAuthHeaders());
       Swal.fire('Success!', 'Student added successfully.', 'success');
       setShowModal(false);
       setFormData({ name: '', roll: '', batchId: '' });
-      if (selectedBatch) {
-        fetchStudentsByBatch(selectedBatch);
-      } else {
-        fetchStudents();
-      }
-      setError('');
+      selectedBatch ? fetchStudentsByBatch(selectedBatch) : fetchStudents();
     } catch (err) {
-      console.error('Failed to add student:', err.response?.data?.message || err.message);
-      setError(err.response?.data?.message || 'Failed to add student');
-      Swal.fire('Error!', err.response?.data?.message || 'Failed to add student', 'error');
+      const msg = err.response?.data?.message || 'Failed to add student';
+      setError(msg);
+      Swal.fire('Error!', msg, 'error');
     } finally {
       setLoading(false);
     }
   };
 
-  // Update student
   const updateStudent = async () => {
     try {
-      console.log('Updating student:', editingStudent.id, formData);
       setLoading(true);
       await axios.put(
         API_ENDPOINTS.students.update(editingStudent.id),
@@ -132,22 +104,16 @@ const StudentManagement = () => {
       setShowModal(false);
       setEditingStudent(null);
       setFormData({ name: '', roll: '', batchId: '' });
-      if (selectedBatch) {
-        fetchStudentsByBatch(selectedBatch);
-      } else {
-        fetchStudents();
-      }
-      setError('');
+      selectedBatch ? fetchStudentsByBatch(selectedBatch) : fetchStudents();
     } catch (err) {
-      console.error('Failed to update student:', err.response?.data?.message || err.message);
-      setError(err.response?.data?.message || 'Failed to update student');
-      Swal.fire('Error!', err.response?.data?.message || 'Failed to update student', 'error');
+      const msg = err.response?.data?.message || 'Failed to update student';
+      setError(msg);
+      Swal.fire('Error!', msg, 'error');
     } finally {
       setLoading(false);
     }
   };
 
-  // Delete 
   const deleteStudent = async (studentId) => {
     const result = await Swal.fire({
       title: 'Are you sure?',
@@ -162,43 +128,30 @@ const StudentManagement = () => {
     if (!result.isConfirmed) return;
 
     try {
-      console.log('Deleting student:', studentId);
       setLoading(true);
       await axios.delete(API_ENDPOINTS.students.delete(studentId), getAuthHeaders());
       Swal.fire('Deleted!', 'Student has been deleted.', 'success');
-      if (selectedBatch) {
-        fetchStudentsByBatch(selectedBatch);
-      } else {
-        fetchStudents();
-      }
-      setError('');
+      selectedBatch ? fetchStudentsByBatch(selectedBatch) : fetchStudents();
     } catch (err) {
-      console.error('Failed to delete student:', err.response?.data?.message || err.message);
-      setError(err.response?.data?.message || 'Failed to delete student');
-      Swal.fire('Error!', err.response?.data?.message || 'Failed to delete student', 'error');
+      const msg = err.response?.data?.message || 'Failed to delete student';
+      setError(msg);
+      Swal.fire('Error!', msg, 'error');
     } finally {
       setLoading(false);
     }
   };
 
-  // Handle  submission
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (editingStudent) {
-      updateStudent();
-    } else {
-      addStudent();
-    }
+    editingStudent ? updateStudent() : addStudent();
   };
 
-  // modal for adding
   const openAddModal = () => {
     setEditingStudent(null);
     setFormData({ name: '', roll: '', batchId: '' });
     setShowModal(true);
   };
 
-  // modal for editing
   const openEditModal = (student) => {
     setEditingStudent(student);
     setFormData({
@@ -209,37 +162,26 @@ const StudentManagement = () => {
     setShowModal(true);
   };
 
-  // batch filter
   const handleBatchFilter = (e) => {
     const batchId = e.target.value;
     setSelectedBatch(batchId);
-
-    if (batchId === '') {
-      fetchStudents();
-    } else {
-      fetchStudentsByBatch(batchId);
-    }
+    batchId === '' ? fetchStudents() : fetchStudentsByBatch(batchId);
   };
 
   useEffect(() => {
-    console.log('StudentManagementFull component mounted, fetching initial data...');
     fetchStudents();
     fetchBatches();
   }, [fetchStudents, fetchBatches]);
 
   return (
-    <div className="p-6">
+    <div className="p-4 sm:p-6">
       {/* Header */}
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-3xl font-bold">Student Management</h2>
-        <button
-          className="btn btn-primary"
-          onClick={openAddModal}
-        >
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+        <h2 className="text-2xl sm:text-3xl font-bold">Student Management</h2>
+        <button className="btn btn-primary w-full sm:w-auto" onClick={openAddModal}>
           Add New Student
         </button>
       </div>
-
 
       {error && (
         <div className="alert alert-error mb-4">
@@ -249,12 +191,10 @@ const StudentManagement = () => {
 
       {/* Filters */}
       <div className="mb-6">
-        <div className="flex gap-4 items-center">
-          <label className="label">
-            <span className="label-text font-semibold">Filter by Batch:</span>
-          </label>
+        <div className="flex flex-col sm:flex-row flex-wrap gap-4 items-start sm:items-center">
+          <label className="font-semibold">Filter by Batch:</label>
           <select
-            className="select select-bordered w-64"
+            className="select select-bordered w-full sm:w-64"
             value={selectedBatch}
             onChange={handleBatchFilter}
           >
@@ -266,7 +206,7 @@ const StudentManagement = () => {
             ))}
           </select>
           <button
-            className="btn btn-outline"
+            className="btn btn-outline w-full sm:w-auto"
             onClick={() => {
               setSelectedBatch('');
               fetchStudents();
@@ -277,7 +217,7 @@ const StudentManagement = () => {
         </div>
       </div>
 
-      {/* Loading */}
+      {/* Loading Spinner */}
       {loading && (
         <div className="flex justify-center items-center py-8">
           <span className="loading loading-spinner loading-lg"></span>
@@ -287,7 +227,7 @@ const StudentManagement = () => {
       {/* Students Table */}
       {!loading && (
         <div className="overflow-x-auto">
-          <table className="table table-zebra w-full">
+          <table className="table table-zebra w-full text-sm sm:text-base">
             <thead>
               <tr>
                 <th>#</th>
@@ -316,9 +256,9 @@ const StudentManagement = () => {
                     <td>
                       {batches.find(b => b.id === student.batchId)?.name || 'Unknown'}
                     </td>
-                    <td>
+                    <td className="flex flex-col sm:flex-row gap-2">
                       <button
-                        className="btn btn-sm text-black btn-secondary mr-2"
+                        className="btn btn-sm text-black btn-secondary"
                         onClick={() => openEditModal(student)}
                       >
                         Edit
@@ -341,7 +281,7 @@ const StudentManagement = () => {
       {/* Modal */}
       {showModal && (
         <div className="modal modal-open">
-          <div className="modal-box relative">
+          <div className="modal-box relative w-11/12 max-w-sm sm:max-w-lg">
             <h3 className="text-xl font-bold mb-4">
               {editingStudent ? 'Edit Student' : 'Add New Student'}
             </h3>

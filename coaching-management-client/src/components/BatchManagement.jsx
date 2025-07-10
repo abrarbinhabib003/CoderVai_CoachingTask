@@ -13,14 +13,17 @@ const BatchManagement = () => {
   const [selectedBatchId, setSelectedBatchId] = useState(null);
   const [selectedBatchName, setSelectedBatchName] = useState('');
 
-  // Fetch all batches
   const fetchBatches = useCallback(async () => {
     setLoading(true);
     try {
       const { data } = await axios.get(API_ENDPOINTS.batches.getAll);
       setBatches(data.batches || []);
     } catch (err) {
-      Swal.fire('Error', err.response?.data?.message || err.message || 'Failed to fetch batches', 'error');
+      Swal.fire(
+        'Error',
+        err.response?.data?.message || err.message || 'Failed to fetch batches',
+        'error'
+      );
     } finally {
       setLoading(false);
     }
@@ -30,7 +33,6 @@ const BatchManagement = () => {
     fetchBatches();
   }, [fetchBatches]);
 
-  // Create Batch
   const createBatch = async (e) => {
     e.preventDefault();
 
@@ -46,11 +48,14 @@ const BatchManagement = () => {
       setSelectedBatchName('');
       fetchBatches();
     } catch (err) {
-      Swal.fire('Error', err.response?.data?.message || err.message || 'Failed to create batch', 'error');
+      Swal.fire(
+        'Error',
+        err.response?.data?.message || err.message || 'Failed to create batch',
+        'error'
+      );
     }
   };
 
-  // Update Batch
   const updateBatch = async (e) => {
     e.preventDefault();
 
@@ -60,18 +65,23 @@ const BatchManagement = () => {
     }
 
     try {
-      await axios.put(API_ENDPOINTS.batches.update(selectedBatchId), { name: selectedBatchName });
+      await axios.put(API_ENDPOINTS.batches.update(selectedBatchId), {
+        name: selectedBatchName,
+      });
       Swal.fire('Success', 'Batch updated successfully!', 'success');
       setShowEditModal(false);
       setSelectedBatchName('');
       setSelectedBatchId(null);
       fetchBatches();
     } catch (err) {
-      Swal.fire('Error', err.response?.data?.message || err.message || 'Failed to update batch', 'error');
+      Swal.fire(
+        'Error',
+        err.response?.data?.message || err.message || 'Failed to update batch',
+        'error'
+      );
     }
   };
 
-  // Delete Batch
   const deleteBatch = async (id) => {
     const result = await Swal.fire({
       title: 'Are you sure?',
@@ -88,21 +98,30 @@ const BatchManagement = () => {
         Swal.fire('Deleted!', 'Batch has been deleted.', 'success');
         fetchBatches();
       } catch (err) {
-        Swal.fire('Error', err.response?.data?.message || err.message || 'Failed to delete batch', 'error');
+        Swal.fire(
+          'Error',
+          err.response?.data?.message || err.message || 'Failed to delete batch',
+          'error'
+        );
       }
     }
   };
 
   if (loading) {
-    return <div className="p-6 text-center">Loading...</div>;
+    return (
+      <div className="flex justify-center items-center h-40">
+        <span className="loading loading-spinner loading-lg"></span>
+      </div>
+    );
   }
 
   return (
-    <div className="p-6">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-3xl font-bold">Batch Management</h2>
+    <div className="p-4 sm:p-6">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+        <h2 className="text-2xl sm:text-3xl font-bold">Batch Management</h2>
         <button
-          className="btn btn-primary"
+          className="btn btn-primary w-full sm:w-auto"
           onClick={() => {
             setSelectedBatchName('');
             setShowCreateModal(true);
@@ -112,10 +131,11 @@ const BatchManagement = () => {
         </button>
       </div>
 
+      {/* No Batches */}
       {batches.length === 0 ? (
         <div className="text-center text-gray-500">No batches found.</div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {batches.map((batch) => (
             <div key={batch.id} className="card bg-base-100 shadow-md">
               <div className="card-body">
@@ -124,7 +144,7 @@ const BatchManagement = () => {
                 <p className="text-xs text-gray-400">
                   Created: {new Date(batch.createdAt).toLocaleDateString()}
                 </p>
-                <div className="flex justify-end gap-2 mt-4">
+                <div className="flex justify-end gap-2 mt-4 flex-wrap">
                   <button
                     className="btn btn-sm btn-outline"
                     onClick={() => {
@@ -135,7 +155,10 @@ const BatchManagement = () => {
                   >
                     Edit
                   </button>
-                  <button className="btn btn-sm btn-error" onClick={() => deleteBatch(batch.id)}>
+                  <button
+                    className="btn btn-sm btn-error"
+                    onClick={() => deleteBatch(batch.id)}
+                  >
                     Delete
                   </button>
                 </div>
@@ -148,18 +171,22 @@ const BatchManagement = () => {
       {/* Create Modal */}
       {showCreateModal && (
         <div className="modal modal-open">
-          <div className="modal-box">
+          <div className="modal-box w-11/12 max-w-md">
             <h3 className="font-bold text-lg">Create New Batch</h3>
-            <form onSubmit={createBatch}>
+            <form onSubmit={createBatch} className="mt-4 space-y-4">
               <input
-                className="input input-bordered w-full my-4"
+                className="input input-bordered w-full"
                 placeholder="Batch Name"
                 value={selectedBatchName}
                 onChange={(e) => setSelectedBatchName(e.target.value)}
                 required
               />
               <div className="modal-action">
-                <button type="button" className="btn btn-ghost" onClick={() => setShowCreateModal(false)}>
+                <button
+                  type="button"
+                  className="btn btn-ghost"
+                  onClick={() => setShowCreateModal(false)}
+                >
                   Cancel
                 </button>
                 <button type="submit" className="btn btn-primary">
@@ -174,18 +201,22 @@ const BatchManagement = () => {
       {/* Edit Modal */}
       {showEditModal && (
         <div className="modal modal-open">
-          <div className="modal-box">
+          <div className="modal-box w-11/12 max-w-md">
             <h3 className="font-bold text-lg">Edit Batch</h3>
-            <form onSubmit={updateBatch}>
+            <form onSubmit={updateBatch} className="mt-4 space-y-4">
               <input
-                className="input input-bordered w-full my-4"
+                className="input input-bordered w-full"
                 placeholder="Batch Name"
                 value={selectedBatchName}
                 onChange={(e) => setSelectedBatchName(e.target.value)}
                 required
               />
               <div className="modal-action">
-                <button type="button" className="btn btn-ghost" onClick={() => setShowEditModal(false)}>
+                <button
+                  type="button"
+                  className="btn btn-ghost"
+                  onClick={() => setShowEditModal(false)}
+                >
                   Cancel
                 </button>
                 <button type="submit" className="btn btn-primary">

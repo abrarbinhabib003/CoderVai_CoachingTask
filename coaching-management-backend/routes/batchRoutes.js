@@ -2,10 +2,8 @@ const express = require('express');
 const router = express.Router();
 const batchController = require('../controllers/batchController');
 
-
-// Batch routes
 router.get('/', batchController.getBatches);           
-router.get('/:id', batchController.getBatchById);      
+router.get('/:id', batchController.getBatchById);     
 router.post('/', batchController.createBatch);        
 router.put('/:id', batchController.updateBatch);       
 router.delete('/:id', batchController.deleteBatch);    

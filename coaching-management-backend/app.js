@@ -7,36 +7,34 @@ const { logRequest } = require('./middleware/authMiddleware');
 
 dotenv.config();
 
-console.log('Starting The Server...');
-console.log('Environment:', process.env.NODE_ENV || 'development');
-console.log('Frontend URL:', process.env.FRONTEND_URL || 'http://localhost:5173');
+console.log(' Starting Server');
+console.log(' Environment:', process.env.NODE_ENV || 'development');
+console.log(' Frontend URL:', process.env.FRONTEND_URL || 'http://localhost:5173');
 
-// routes
+
 const authRoutes = require('./routes/authRoutes');
 const studentRoutes = require('./routes/studentRoutes');
 const batchRoutes = require('./routes/batchRoutes');
 
 
-//  Express app
+
 const app = express();
 
-// Middleware
+
 app.use(cors({
   origin: process.env.FRONTEND_URL || 'http://localhost:5173',
   credentials: true
 }));
-app.use(cookieParser());
+app.use(cookieParser()); 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-console.log('Middleware used successfully');
 
-// development level logging test
 if (process.env.NODE_ENV === 'development') {
   app.use(logRequest);
 }
 
-//  route checking
+
 app.get('/', (req, res) => {
   res.json({
     message: 'Backend is Running!',
@@ -45,12 +43,11 @@ app.get('/', (req, res) => {
 });
 
 //  Routes
+app.use('/api/auth', authRoutes);
 app.use('/api/students', studentRoutes);
 app.use('/api/batches', batchRoutes);
-app.use('/api/auth', authRoutes);
 
-
-//  404 routes
+//  404 
 app.use((req, res) => {
   res.status(404).json({
     message: 'Route not found',

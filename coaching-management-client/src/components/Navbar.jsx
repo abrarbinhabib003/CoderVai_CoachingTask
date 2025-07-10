@@ -2,7 +2,6 @@ import React from 'react';
 import { useAuth } from '../api/UseAuth';
 import { useNavigate } from 'react-router-dom';
 
-
 const Navbar = () => {
   const { currentUser, logout } = useAuth();
   const navigate = useNavigate();
@@ -17,13 +16,13 @@ const Navbar = () => {
   };
 
   return (
-    <div className="navbar bg-base-100 shadow-lg">
+    <div className="navbar bg-base-100 shadow-lg sticky top-0 z-50">
       <div className="flex-1">
-        <button 
+        <button
           className="btn btn-ghost text-xl"
           onClick={() => navigate('/')}
         >
-         SmartCCM
+          SmartCCM
         </button>
       </div>
 
@@ -35,7 +34,10 @@ const Navbar = () => {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h7" />
             </svg>
           </div>
-          <ul tabIndex={0} className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
+          <ul
+            tabIndex={0}
+            className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52"
+          >
             <li><button onClick={() => navigate('/')}>Home</button></li>
             <li><button onClick={() => navigate('/admin-dashboard')}>Admin Dashboard</button></li>
             <div className="divider my-1"></div>
@@ -64,11 +66,11 @@ const Navbar = () => {
                 <div className="avatar placeholder">
                   <div className="bg-neutral text-neutral-content rounded-full w-8">
                     <span className="text-xs">
-                      {currentUser.email?.charAt(0).toUpperCase()}
+                      {currentUser?.email?.charAt(0).toUpperCase() || ''}
                     </span>
                   </div>
                 </div>
-                <span className="text-sm">{currentUser.email}</span>
+                <span className="text-sm">{currentUser?.email || ''}</span>
               </div>
             </>
           ) : (
