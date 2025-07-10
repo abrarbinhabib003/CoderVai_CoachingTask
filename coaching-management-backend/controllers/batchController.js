@@ -3,8 +3,7 @@ const prisma = new PrismaClient();
 
 // Get all batches
 exports.getBatches = async (req, res) => {
-  console.log('📚 Fetching all batches (testing mode - no auth required)');
-
+ 
   try {
     const allbatches = await prisma.batch.findMany({
       include: {

@@ -1,6 +1,7 @@
 generator client {
-  provider = "prisma-client-js"
-  output   = "../generated/prisma"
+  provider      = "prisma-client-js"
+  output        = "../generated/prisma"
+  binaryTargets = ["native", "rhel-openssl-3.0.x"]
 }
 
 datasource db {
@@ -16,7 +17,6 @@ model User {
   email     String?  @unique
   createdAt DateTime @default(now())
 }
-
 
 model Batch {
   id        Int       @id @default(autoincrement())

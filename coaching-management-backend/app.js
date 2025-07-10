@@ -4,59 +4,47 @@ const cookieParser = require('cookie-parser');
 const dotenv = require('dotenv');
 const { logRequest } = require('./middleware/authMiddleware');
 
-
 dotenv.config();
 
 console.log(' Starting Server');
 console.log(' Environment:', process.env.NODE_ENV || 'development');
-console.log(' Frontend URL:', process.env.FRONTEND_URL || 'http://localhost:5173');
-
+console.log(' Frontend URL:', process.env.FRONTEND_URL || '');
 
 const authRoutes = require('./routes/authRoutes');
 const studentRoutes = require('./routes/studentRoutes');
 const batchRoutes = require('./routes/batchRoutes');
 
+const app = express(); 
 
+const frontendUrl = (process.env.FRONTEND_URL || 'http://localhost:5173').replace(/\/$/, '');
 
-const app = express();
-
+console.log('Using CORS origin:', frontendUrl);
 
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+  origin: frontendUrl,
   credentials: true
 }));
+
 app.use(cookieParser()); 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
 
 if (process.env.NODE_ENV === 'development') {
   app.use(logRequest);
 }
 
-
 app.get('/', (req, res) => {
   res.json({
     message: 'Backend is Running!',
-    
   });
 });
 
-//  Routes
+// Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/students', studentRoutes);
 app.use('/api/batches', batchRoutes);
 
-// Test route for debugging
-app.get('/api/test', (req, res) => {
-  res.json({
-    message: 'Backend API is working!',
-    timestamp: new Date().toISOString(),
-    environment: process.env.NODE_ENV || 'development'
-  });
-});
-
-//  404 
+// 404 handler
 app.use((req, res) => {
   res.status(404).json({
     message: 'Route not found',

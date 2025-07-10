@@ -24,7 +24,7 @@ const authMiddleware = async (req, res, next) => {
       });
     }
 
-    console.log('🎫 Token found, verifying...');
+ 
 
     // Verify token
     const decoded = jwt.verify(token, process.env.JWT_SECRET);

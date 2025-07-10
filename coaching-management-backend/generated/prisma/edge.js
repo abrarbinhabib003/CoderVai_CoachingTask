@@ -173,6 +173,10 @@ const config = {
         "fromEnvVar": null,
         "value": "windows",
         "native": true
+      },
+      {
+        "fromEnvVar": null,
+        "value": "rhel-openssl-3.0.x"
       }
     ],
     "previewFeatures": [],
@@ -190,7 +194,6 @@ const config = {
     "db"
   ],
   "activeProvider": "postgresql",
-  "postinstall": false,
   "inlineDatasources": {
     "db": {
       "url": {
@@ -199,8 +202,8 @@ const config = {
       }
     }
   },
-  "inlineSchema": "generator client {\n  provider = \"prisma-client-js\"\n  output   = \"../generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nmodel User {\n  id        Int      @id @default(autoincrement())\n  username  String   @unique\n  password  String\n  name      String?\n  email     String?  @unique\n  createdAt DateTime @default(now())\n}\n\nmodel Batch {\n  id        Int       @id @default(autoincrement())\n  name      String\n  createdAt DateTime  @default(now())\n  students  Student[]\n}\n\nmodel Student {\n  id         Int          @id @default(autoincrement())\n  name       String\n  roll       String       @unique\n  batch      Batch        @relation(fields: [batchId], references: [id])\n  batchId    Int\n  attendance Attendance[]\n}\n\nmodel Attendance {\n  id        Int      @id @default(autoincrement())\n  date      DateTime\n  status    String // \"present\" or \"absent\"\n  student   Student  @relation(fields: [studentId], references: [id])\n  studentId Int\n}\n\nmodel Notice {\n  id        Int      @id @default(autoincrement())\n  title     String\n  content   String\n  createdAt DateTime @default(now())\n}\n",
-  "inlineSchemaHash": "2400eebf66cf261a7989e6e93893588053c10ec17fac37f2b289e090db28b830",
+  "inlineSchema": "generator client {\n  provider      = \"prisma-client-js\"\n  output        = \"../generated/prisma\"\n  binaryTargets = [\"native\", \"rhel-openssl-3.0.x\"]\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nmodel User {\n  id        Int      @id @default(autoincrement())\n  username  String   @unique\n  password  String\n  name      String?\n  email     String?  @unique\n  createdAt DateTime @default(now())\n}\n\nmodel Batch {\n  id        Int       @id @default(autoincrement())\n  name      String\n  createdAt DateTime  @default(now())\n  students  Student[]\n}\n\nmodel Student {\n  id         Int          @id @default(autoincrement())\n  name       String\n  roll       String       @unique\n  batch      Batch        @relation(fields: [batchId], references: [id])\n  batchId    Int\n  attendance Attendance[]\n}\n\nmodel Attendance {\n  id        Int      @id @default(autoincrement())\n  date      DateTime\n  status    String // \"present\" or \"absent\"\n  student   Student  @relation(fields: [studentId], references: [id])\n  studentId Int\n}\n\nmodel Notice {\n  id        Int      @id @default(autoincrement())\n  title     String\n  content   String\n  createdAt DateTime @default(now())\n}\n",
+  "inlineSchemaHash": "8c21536dd6d79ec47924f2c54751ca68a9dbc8a7c3a4830b7d4b609f7c77ab32",
   "copyEngine": true
 }
 config.dirname = '/'
