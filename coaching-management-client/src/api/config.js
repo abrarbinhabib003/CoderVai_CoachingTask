@@ -1,34 +1,35 @@
 
-export const API_BASE_URL = 'http://localhost:5000/api';
+export const API_BASE_URL = 'https://coaching-management-backend-one.vercel.app';
+
 
 
 export const API_ENDPOINTS = {
   
   auth: {
-    login: `${API_BASE_URL}/auth/login`,
-    register: `${API_BASE_URL}/auth/register`,
-    logout: `${API_BASE_URL}/auth/logout`,
-    profile: `${API_BASE_URL}/auth/profile`,
+    login: `${API_BASE_URL}/api/auth/login`,
+    register: `${API_BASE_URL}/api/auth/register`,
+    logout: `${API_BASE_URL}/api/auth/logout`,
+    profile: `${API_BASE_URL}/api/auth/profile`,
   },
   
   // Student endpoints
   students: {
-    base: `${API_BASE_URL}/students`,
-    create: `${API_BASE_URL}/students`,
-    getAll: `${API_BASE_URL}/students`,
-    getById: (id) => `${API_BASE_URL}/students/${id}`,
-    update: (id) => `${API_BASE_URL}/students/${id}`,
-    delete: (id) => `${API_BASE_URL}/students/${id}`,
+    base: `${API_BASE_URL}/api/students`,
+    create: `${API_BASE_URL}/api/students`,
+    getAll: `${API_BASE_URL}/api/students`,
+    getById: (id) => `${API_BASE_URL}/api/students/${id}`,
+    update: (id) => `${API_BASE_URL}/api/students/${id}`,
+    delete: (id) => `${API_BASE_URL}/api/students/${id}`,
   },
   
   // Batch endpoints
   batches: {
-    base: `${API_BASE_URL}/batches`,
-    create: `${API_BASE_URL}/batches`,
-    getAll: `${API_BASE_URL}/batches`,
-    getById: (id) => `${API_BASE_URL}/batches/${id}`,
-    update: (id) => `${API_BASE_URL}/batches/${id}`,
-    delete: (id) => `${API_BASE_URL}/batches/${id}`,
+    base: `${API_BASE_URL}/api/batches`,
+    create: `${API_BASE_URL}/api/batches`,
+    getAll: `${API_BASE_URL}/api/batches`,
+    getById: (id) => `${API_BASE_URL}/api/batches/${id}`,
+    update: (id) => `${API_BASE_URL}/api/batches/${id}`,
+    delete: (id) => `${API_BASE_URL}/api/batches/${id}`,
   },
   
  

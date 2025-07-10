@@ -16,7 +16,8 @@ const Navbar = () => {
   };
 
   return (
-    <div className="navbar bg-base-100 shadow-lg sticky top-0 z-50">
+<div className="navbar bg-slate-900 text-white shadow-lg sticky top-0 z-50">
+
       <div className="flex-1">
         <button
           className="btn btn-ghost text-xl"

@@ -1,17 +1,17 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
-import { FaFacebookF, FaLinkedinIn, FaGithub, FaRedditAlien } from 'react-icons/fa'
-import { HiOutlineLocationMarker, HiOutlineMail, HiOutlinePhone, HiOutlineClock } from 'react-icons/hi'
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { FaFacebookF, FaLinkedinIn, FaGithub, FaRedditAlien } from 'react-icons/fa';
+import { HiOutlineLocationMarker, HiOutlineMail, HiOutlinePhone, HiOutlineClock } from 'react-icons/hi';
 
 const Footer = () => {
   return (
-    <footer className="bg-gray-900 text-white">
+    <footer className="bg-slate-900 text-white">
       <div className="container mx-auto px-6 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Branding */}
           <div className="space-y-4">
             <div>
-              <h3 className="text-2xl font-bold text-primary">SmartCCM</h3>
+              <h3 className="text-2xl font-bold text-cyan-400">SmartCCM</h3>
               <p className="text-sm text-gray-400">Coaching Dashboard</p>
             </div>
             <p className="text-gray-300 leading-relaxed">
@@ -19,16 +19,16 @@ const Footer = () => {
               and publish notices - all from one place.
             </p>
             <div className="flex space-x-4">
-              <a href="#" className="hover:text-primary transition-colors">
+              <a href="#" className="hover:text-cyan-400 transition-colors">
                 <FaFacebookF className="w-5 h-5" />
               </a>
-              <a href="#" className="hover:text-primary transition-colors">
+              <a href="#" className="hover:text-cyan-400 transition-colors">
                 <FaLinkedinIn className="w-5 h-5" />
               </a>
-              <a href="#" className="hover:text-primary transition-colors">
+              <a href="#" className="hover:text-cyan-400 transition-colors">
                 <FaGithub className="w-5 h-5" />
               </a>
-              <a href="#" className="hover:text-primary transition-colors">
+              <a href="#" className="hover:text-cyan-400 transition-colors">
                 <FaRedditAlien className="w-5 h-5" />
               </a>
             </div>
@@ -36,20 +36,20 @@ const Footer = () => {
 
           {/* Quick Links */}
           <div className="space-y-4">
-            <h4 className="text-lg font-semibold text-primary">Quick Links</h4>
+            <h4 className="text-lg font-semibold text-cyan-400">Quick Links</h4>
             <ul className="space-y-2 text-gray-300">
-              <li><Link to="/" className="hover:text-primary transition-colors">Home</Link></li>
-              <li><Link to="/admin-dashboard" className="hover:text-primary transition-colors">Dashboard</Link></li>
-              <li><Link to="/login" className="hover:text-primary transition-colors">Login</Link></li>
-              <li><Link to="/register" className="hover:text-primary transition-colors">Register</Link></li>
-              <li><a href="#" className="hover:text-primary transition-colors">About Us</a></li>
-              <li><a href="#" className="hover:text-primary transition-colors">Contact</a></li>
+              <li><Link to="/" className="hover:text-cyan-400 transition-colors">Home</Link></li>
+              <li><Link to="/admin-dashboard" className="hover:text-cyan-400 transition-colors">Dashboard</Link></li>
+              <li><Link to="/login" className="hover:text-cyan-400 transition-colors">Login</Link></li>
+              <li><Link to="/register" className="hover:text-cyan-400 transition-colors">Register</Link></li>
+              <li><a href="#" className="hover:text-cyan-400 transition-colors">About Us</a></li>
+              <li><a href="#" className="hover:text-cyan-400 transition-colors">Contact</a></li>
             </ul>
           </div>
 
           {/* Features */}
           <div className="space-y-4">
-            <h4 className="text-lg font-semibold text-primary">Features</h4>
+            <h4 className="text-lg font-semibold text-cyan-400">Features</h4>
             <ul className="space-y-2 text-gray-300">
               {[
                 "Batch Management",
@@ -60,7 +60,7 @@ const Footer = () => {
                 "Admin Controls"
               ].map((feature, idx) => (
                 <li key={idx}>
-                  <span className="inline-block w-2 h-2 bg-primary rounded-full mr-2"></span>
+                  <span className="inline-block w-2 h-2 bg-cyan-400 rounded-full mr-2"></span>
                   {feature}
                 </li>
               ))}
@@ -69,22 +69,22 @@ const Footer = () => {
 
           {/* Contact Info */}
           <div className="space-y-4">
-            <h4 className="text-lg font-semibold text-primary">Contact Info</h4>
+            <h4 className="text-lg font-semibold text-cyan-400">Contact Info</h4>
             <div className="space-y-3 text-gray-300 text-sm">
               <div className="flex items-start gap-3">
-                <HiOutlineLocationMarker className="text-primary w-5 h-5 mt-0.5 flex-shrink-0" />
+                <HiOutlineLocationMarker className="text-cyan-400 w-5 h-5 mt-0.5 flex-shrink-0" />
                 <p>Mirpur,<br />Dhaka 1234</p>
               </div>
               <div className="flex items-center gap-3">
-                <HiOutlinePhone className="text-primary w-5 h-5 flex-shrink-0" />
+                <HiOutlinePhone className="text-cyan-400 w-5 h-5 flex-shrink-0" />
                 <p>+880 1234-567890</p>
               </div>
               <div className="flex items-center gap-3">
-                <HiOutlineMail className="text-primary w-5 h-5 flex-shrink-0" />
+                <HiOutlineMail className="text-cyan-400 w-5 h-5 flex-shrink-0" />
                 <p>info@smartccm.com</p>
               </div>
               <div className="flex items-center gap-3">
-                <HiOutlineClock className="text-primary w-5 h-5 flex-shrink-0" />
+                <HiOutlineClock className="text-cyan-400 w-5 h-5 flex-shrink-0" />
                 <p>Everyday: 8:00 AM - 8:00 PM</p>
               </div>
             </div>
@@ -93,11 +93,11 @@ const Footer = () => {
       </div>
 
       {/* Newsletter */}
-      <div className="bg-gray-800 border-t border-gray-700">
+      <div className="bg-slate-800 border-t border-slate-700">
         <div className="container mx-auto px-6 py-8">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             <div className="text-center md:text-left">
-              <h3 className="text-xl font-semibold text-primary mb-2">Stay Updated</h3>
+              <h3 className="text-xl font-semibold text-cyan-400 mb-2">Stay Updated</h3>
               <p className="text-gray-400">
                 Subscribe to get the latest news and updates about SmartCCM features
               </p>
@@ -108,7 +108,7 @@ const Footer = () => {
                 placeholder="Enter your email" 
                 className="input input-bordered flex-1 md:w-64"
               />
-              <button className="btn btn-primary whitespace-nowrap">
+              <button className="btn bg-cyan-400 hover:bg-cyan-500 text-black whitespace-nowrap">
                 Subscribe
               </button>
             </div>
@@ -117,22 +117,22 @@ const Footer = () => {
       </div>
 
       {/* Footer Bottom */}
-      <div className="bg-gray-900 border-t border-gray-700">
+      <div className="bg-slate-900 border-t border-slate-700">
         <div className="container mx-auto px-6 py-6">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <p className="text-gray-500 text-sm text-center md:text-left">
               © 2025 SmartCCM. All rights reserved.
             </p>
             <div className="flex gap-6 text-sm text-gray-500">
-              <a href="#" className="hover:text-primary transition-colors">Privacy Policy</a>
-              <a href="#" className="hover:text-primary transition-colors">Terms of Service</a>
-              <a href="#" className="hover:text-primary transition-colors">Support</a>
+              <a href="#" className="hover:text-cyan-400 transition-colors">Privacy Policy</a>
+              <a href="#" className="hover:text-cyan-400 transition-colors">Terms of Service</a>
+              <a href="#" className="hover:text-cyan-400 transition-colors">Support</a>
             </div>
           </div>
         </div>
       </div>
     </footer>
-  )
-}
+  );
+};
 
-export default Footer
+export default Footer;

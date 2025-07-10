@@ -45,7 +45,7 @@ const AdminDashboard = () => {
     <div className="min-h-screen bg-base-200">
       <div className="flex flex-col md:flex-row">
         {/* Sidebar - visible on md */}
-        <div className="hidden md:block w-64 min-h-screen bg-base-100 shadow-lg">
+        <div className="hidden md:block w-64 min-h-screen bg-base-300 shadow-lg">
           <div className="p-4 border-b">
             <h1 className="text-xl font-bold text-primary">SmartCCM Admin</h1>
             <p className="text-sm text-gray-600">Coaching Management</p>
