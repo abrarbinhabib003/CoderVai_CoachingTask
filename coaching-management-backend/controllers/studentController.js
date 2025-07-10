@@ -53,7 +53,7 @@ exports.addStudent = async (req, res) => {
 
 // Get all students
 exports.getAllStudents = async (req, res) => {
-  console.log(' Fetching all students for user:', req.user?.id);
+  console.log('Fetching all students...');
   
   try {
     const students = await prisma.student.findMany({

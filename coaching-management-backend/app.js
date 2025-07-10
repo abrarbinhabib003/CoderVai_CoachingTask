@@ -47,6 +47,15 @@ app.use('/api/auth', authRoutes);
 app.use('/api/students', studentRoutes);
 app.use('/api/batches', batchRoutes);
 
+// Test route for debugging
+app.get('/api/test', (req, res) => {
+  res.json({
+    message: 'Backend API is working!',
+    timestamp: new Date().toISOString(),
+    environment: process.env.NODE_ENV || 'development'
+  });
+});
+
 //  404 
 app.use((req, res) => {
   res.status(404).json({

@@ -1,0 +1,49 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  username  String   @unique
+  password  String
+  name      String?
+  email     String?  @unique
+  createdAt DateTime @default(now())
+}
+
+model Batch {
+  id        Int       @id @default(autoincrement())
+  name      String
+  createdAt DateTime  @default(now())
+  students  Student[]
+}
+
+model Student {
+  id         Int          @id @default(autoincrement())
+  name       String
+  roll       String       @unique
+  batch      Batch        @relation(fields: [batchId], references: [id])
+  batchId    Int
+  attendance Attendance[]
+}
+
+model Attendance {
+  id        Int      @id @default(autoincrement())
+  date      DateTime
+  status    String // "present" or "absent"
+  student   Student  @relation(fields: [studentId], references: [id])
+  studentId Int
+}
+
+model Notice {
+  id        Int      @id @default(autoincrement())
+  title     String
+  content   String
+  createdAt DateTime @default(now())
+}
