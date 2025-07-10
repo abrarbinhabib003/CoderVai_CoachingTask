@@ -13,7 +13,7 @@ This web app allows administrators to manage students and batches, perform CRUD 
 
 ---
 
-## 🖥Client Side
+## Client Side
 ###  Technologies Used
 - React.js
 - Tailwind CSS
